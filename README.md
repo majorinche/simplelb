@@ -28,3 +28,8 @@ To add followings as load balanced backends
 ```bash
 simple-lb.exe --backends=http://localhost:3031,http://localhost:3032,http://localhost:3033,http://localhost:3034
 ```
+
+
+# docker version diff
+default is: 1.13.1
+but docker-ce is 19.03
