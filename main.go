@@ -75,7 +75,7 @@ func (s *ServerPool) GetNextPeer() *Backend {
 	next := s.NextIndex()
 	l := len(s.backends) + next // start from next and move a full cycle
 	for i := next; i < l; i++ {
-		idx := i % len(s.backends) // take an index by modding
+		idx := i % len(s.backends)     // take an index by modding
 		if s.backends[idx].IsAlive() { // if we have an alive backend, use it and store if its not the original one
 			if i != next {
 				atomic.StoreUint64(&s.current, uint64(idx))
@@ -146,8 +146,12 @@ func isBackendAlive(u *url.URL) bool {
 
 // healthCheck runs a routine for check status of the backends every 2 mins
 func healthCheck() {
-	t := time.NewTicker(time.Second * 20)
+	// https://golang.google.cn/src/time/tick.go?h=time
+	// time.NewTicker返回的是结构体Ticker中的一个通道变量C,通道是指有值即执行,没有值不执行
+	t := time.NewTicker(time.Second * 120)
 	for {
+		//select与case结合使用，类似switch功能
+		//这里没有写default字句，所以会一直执行
 		select {
 		case <-t.C:
 			log.Println("Starting health check...")
@@ -216,6 +220,7 @@ func main() {
 	}
 
 	// start health checking
+	// 类似于启动另外一个go程序了，叫goroutine功能
 	go healthCheck()
 
 	log.Printf("Load Balancer started at :%d\n", port)
