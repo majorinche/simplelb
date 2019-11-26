@@ -157,3 +157,20 @@ Creating simplelb_web1_1  ... done
 Creating simplelb_web2_1  ... done
 Creating simplelb_web3_1  ... done
 
+6, test method
+[root@our-server simplelb]# curl localhost:3030
+<html><head><title>HTTP Hello World</title></head><body><h1>Hello from e82deedcf4a3</h1></body></html
+[root@our-server simplelb]# curl localhost:3030
+<html><head><title>HTTP Hello World</title></head><body><h1>Hello from 7c450c2167d1</h1></body></html
+[root@our-server simplelb]# curl localhost:3030
+<html><head><title>HTTP Hello World</title></head><body><h1>Hello from 9c1b828dddc2</h1></body></html
+
+we can see, response from three different backend
+
+7, stop all containers
+[root@our-server simplelb]# docker-compose kill
+Killing simplelb_web2_1 ... done
+Killing simplelb_web1_1 ... done
+Killing load-balancer   ... done
+Killing simplelb_web3_1 ... done
+
