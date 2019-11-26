@@ -148,6 +148,7 @@ func isBackendAlive(u *url.URL) bool {
 func healthCheck() {
 	// https://golang.google.cn/src/time/tick.go?h=time
 	// time.NewTicker返回的是结构体Ticker中的一个通道变量C,通道是指有值即执行,没有值不执行
+	// 参考网址: https://golang.google.cn/src/time/tick.go?h=time
 	t := time.NewTicker(time.Second * 120)
 	for {
 		//select与case结合使用，类似switch功能
