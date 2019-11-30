@@ -1,11 +1,11 @@
 version: "2"
 services:
   front:
-    build: .
-    container_name: load-balancer
-    ports:
+    build: . #这个等同于docker build ., 镜像名用的是simplelb_front
+    container_name: load-balancer # 这个是实际起来之后的容器的名称
+    ports: # port变量应该是在这里传过去的，不是，这个只是docker run时用到的
       - "3030:3030"
-    command: --backends "http://web1:80,http://web2:80,http://web3:80"
+    command: --backends "http://web1:80,http://web2:80,http://web3:80" # 这里把backends变量传给main.go
   web1:
     image: strm/helloworld-http
   web2:
