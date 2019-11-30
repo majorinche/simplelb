@@ -22,9 +22,10 @@ const (
 
 // Backend holds the data about a server
 type Backend struct {
-	URL          *url.URL
-	Alive        bool
-	mux          sync.RWMutex
+	URL   *url.URL
+	Alive bool
+	mux   sync.RWMutex
+	// 这个才是一个重点
 	ReverseProxy *httputil.ReverseProxy
 }
 
@@ -60,6 +61,7 @@ func (s *ServerPool) NextIndex() int {
 }
 
 // MarkBackendStatus changes a status of a backend
+// 这个形式strings类似，假设strings是类型，那么其中的方法就是成员函数了，实际strings是package
 func (s *ServerPool) MarkBackendStatus(backendUrl *url.URL, alive bool) {
 	for _, b := range s.backends {
 		if b.URL.String() == backendUrl.String() {
@@ -168,6 +170,7 @@ func main() {
 	var serverList string
 	var port int
 	flag.StringVar(&serverList, "backends", "", "Load balanced backends, use commas to separate")
+	// 这里传了端口
 	flag.IntVar(&port, "port", 3030, "Port to serve")
 	flag.Parse()
 
@@ -183,6 +186,7 @@ func main() {
 			log.Fatal(err)
 		}
 
+		// 怀疑实际的反向代理是由httputil包完成的
 		proxy := httputil.NewSingleHostReverseProxy(serverUrl)
 		proxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, e error) {
 			log.Printf("[%s] %s\n", serverUrl.Host, e.Error())
@@ -215,16 +219,18 @@ func main() {
 	}
 
 	// create http server
+	// 根据lb创建一个http web服务器
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: http.HandlerFunc(lb),
 	}
 
 	// start health checking
-	// 类似于启动另外一个go程序了，叫goroutine功能
+	// 类似于启动另外一个go程序了，叫goroutine功能，然后继续执行下面的程序
 	go healthCheck()
 
 	log.Printf("Load Balancer started at :%d\n", port)
+	// 这里正是监听
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
